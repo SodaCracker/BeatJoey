@@ -17,5 +17,5 @@ public class SequenceRegion : MusicalElement
 
 public class OnBeatActionInfo : MusicalElement
 {
-    public EPlayerAction m_playerActionType;
+    public EPlayerAction m_playerAction;
 }

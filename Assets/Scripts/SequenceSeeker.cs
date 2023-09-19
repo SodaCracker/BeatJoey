@@ -14,6 +14,14 @@ public class SequenceSeeker<T> where T : MusicalElement
         m_isJustPassElement = true; // 更新检索位置
     }
 
+    public void SetSequence(List<T> sequence)
+    {
+        m_sequence = sequence;
+        m_nextIdx = 0;
+        m_currentBeatCount = 0;
+        m_isJustPassElement = false;
+    }
+    
     /// <summary>
     /// 查找 m_currentBeatCount 之后的那个标记
     /// </summary>

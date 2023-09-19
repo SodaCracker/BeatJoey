@@ -11,7 +11,7 @@ public class ScoringManager : ManagerBase<ScoringManager>, ITickable
         m_scoringUnitSeeker.ProceedTime(deltaCount);
 
         // 如果玩家进行了输入，则判断成功与否
-        if (m_playerActionManager.CurrentPlayerActionType != EPlayerAction.None)
+        if (m_playerActionManager.CurrentPlayerAction != EPlayerAction.None)
         {
             int nearestIdx = GetNearestPlayerActionInfoIdx();
             SongInfo song = MusicManager.Instance.CurrentSong;
@@ -125,6 +125,14 @@ public class ScoringManager : ManagerBase<ScoringManager>, ITickable
         public int m_markerIdx;
     }
 
+    public float Temple
+    {
+        get => m_temper;
+        set => m_temper = Mathf.Clamp01(value);
+    }
+
+    private float m_temper;
+
     public float Score { get; private set; }
     public float Temper { get; set; }
 
@@ -134,6 +142,8 @@ public class ScoringManager : ManagerBase<ScoringManager>, ITickable
     private readonly SequenceSeeker<OnBeatActionInfo> m_scoringUnitSeeker = new();
 
     private float m_additionalScore;
+
+    private float m_score;
 
     private int m_previousHitIdx = -1;
     public const float TimingErrorToleranceGood = .22f;

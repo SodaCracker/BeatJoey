@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class MarkerGroupUIController
+public class UIManager : ManagerBase<UIManager>, ITickable, IEventListener
 {
-    public void DrawSeekerGroup()
+    public void Tick()
     {
         if (!MusicManager.Instance.IsPlaying) return;
-        
+
         SongInfo song = MusicManager.Instance.CurrentSong;
         int beginMarkerIdx = m_seekerBackward.NextIdx;
         int endMarkerIdx = m_seekerForward.NextIdx;
@@ -24,6 +24,11 @@ public class MarkerGroupUIController
         }
     }
 
+    public void OnPlayerDoAction(EPlayerAction playerAction)
+    {
+        throw new System.NotImplementedException();
+    }
+
     /// <summary>
     /// 从左边开始显示标记（滞后的标记）
     /// </summary>
@@ -36,7 +41,7 @@ public class MarkerGroupUIController
 
     public Vector2 m_markerOrigin = new(20f, 300f);
     public Texture m_winkIcon;
-    
+
     private readonly float m_pixelsPerBeat = Screen.width * 1f / MarkerEnterOffset;
     private const float MarkerEnterOffset = 2.5f;
     private const float MarkerLeaveOffset = -1f;

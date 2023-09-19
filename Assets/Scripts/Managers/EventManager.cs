@@ -1,9 +1,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-public class EventManager : ManagerBase<EventManager>
+public class EventManager : ManagerBase<EventManager>, ITickable
 {
-    private void Update()
+    public override bool Initialize()
+    {
+        PlayerActionManager.EventOnPlayerDoAction += OnPlayerDoAction;
+        return base.Initialize();
+    }
+
+    public void Tick()
     {
         SongInfo song = MusicManager.Instance.CurrentSong;
 
@@ -25,18 +31,40 @@ public class EventManager : ManagerBase<EventManager>
             }
         }
 
-        for (LinkedListNode<StagingDirection> nodeEvt = m_activeEvents.First; nodeEvt != null; nodeEvt = nodeEvt.Next)
+        for (LinkedListNode<StagingDirection> node = m_activeEvents.First; node != null; node = node.Next)
         {
-            StagingDirection activeEvt = nodeEvt.Value;
+            StagingDirection activeEvt = node.Value;
             activeEvt.Update();
 
-            // 执行结束了吗？
-            if (activeEvt.IsFinished)
-            {
-                activeEvt.OnEnd();
-                // 从执行链表里删除
-                m_activeEvents.Remove(nodeEvt);
-            }
+            // 执行还没结束 
+            if (!activeEvt.IsFinished) continue;
+
+            activeEvt.OnEnd();
+            // 从执行链表里删除
+            m_activeEvents.Remove(node);
+        }
+    }
+
+    public void EventListenerAdd(IEventListener listener)
+    {
+        m_eventListenerList.Add(listener);
+    }
+
+    public void EventListenerRemove(IEventListener listener)
+    {
+        m_eventListenerList.Remove(listener);
+    }
+
+    public void SetSeekerSequence()
+    {
+        m_seekerUnit.SetSequence(MusicManager.Instance.CurrentSong.m_stagingDirectionSequence);
+    }
+
+    private void OnPlayerDoAction(EPlayerAction playerAction)
+    {
+        foreach (IEventListener listener in m_eventListenerList)
+        {
+            listener.OnPlayerDoAction(playerAction);
         }
     }
 
@@ -46,6 +74,8 @@ public class EventManager : ManagerBase<EventManager>
     /// 进行中的事件链表
     /// </summary>
     private readonly LinkedList<StagingDirection> m_activeEvents = new();
+
+    private List<IEventListener> m_eventListenerList = new();
 
     private int m_previousIdx;
 }
