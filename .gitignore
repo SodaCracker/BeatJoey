@@ -1,5 +1,17 @@
-Library/*
-Temp/*
+[Bb]uild/
+[Bb]uilds/
+[Ll]ibrary/
+[Oo]bj/
+[Tt]emp/
+
+# .idea cache
+.idea/
+
+# visual studio cache
+.vs/
+
+# AutoGen
+Logs/
 *.sln
 *.csproj
 *.userprefs
