@@ -4,7 +4,9 @@ public class MusicManager : ManagerBase<MusicManager>, ITickable
 {
     public override bool Initialize()
     {
-        m_musicFinished = false;
+        Application.targetFrameRate = 60;
+        m_audioSource = GameObject.Find("UIRoot").GetComponent<AudioSource>();
+        IsMusicFinished = false;
         return base.Initialize();
     }
 
@@ -13,41 +15,33 @@ public class MusicManager : ManagerBase<MusicManager>, ITickable
         if (m_audioSource.isPlaying)
         {
             PreviousBeatCountFromStart = BeatCountFromStart;
-            BeatCountFromStart = m_audioSource.time * CurrentSong.m_beatPerSecond;
-            m_isPlayPreviousFrame = true;
+            BeatCountFromStart = m_audioSource.time * CurrentSongInfo.m_beatPerSecond;
+            FloatPreviousBeatCount = BeatCountFromStart - PreviousBeatCountFromStart;
         }
         else
         {
-            if (m_isPlayPreviousFrame &&
-                (m_audioSource.timeSamples <= 0 || m_audioSource.timeSamples >= m_audioSource.clip.samples))
+            if (m_isPlayingPreviousFrame &&
+                (m_audioSource.timeSamples <= 0 ||
+                 m_audioSource.timeSamples > m_audioSource.clip.samples))
             {
-                m_musicFinished = true;
+                IsMusicFinished = true;
             }
 
-            m_isPlayPreviousFrame = false;
+            m_isPlayingPreviousFrame = false;
         }
     }
 
-    public void PlayMusicFromStart()
-    {
-        m_musicFinished = false;
-        m_isPlayPreviousFrame = false;
-        BeatCountFromStart = 0;
-        PreviousBeatCountFromStart = 0;
-        m_audioSource.Play();
-    }
-    public float BeatCountFromStart { get; private set; }
-    public float BeatCount => BeatCountFromStart;
-
-    public float PreviousBeatCountFromStart { get; private set; }
-    public float PreviousBeatCount => PreviousBeatCount;
-
-    public SongInfo CurrentSong { set; get; }
-    public float Length => m_audioSource.clip.length * CurrentSong.m_beatPerSecond;
     public bool IsPlaying => m_audioSource.isPlaying;
-    public bool IsFinished => m_musicFinished;
+
+    public bool IsMusicFinished { get; private set; }
+    public SongInfo CurrentSongInfo { get; private set; }
+
+    public float SongLength => m_audioSource.clip.length * CurrentSongInfo.m_beatPerSecond;
+
+    public float BeatCountFromStart { get; private set; }
+    public float PreviousBeatCountFromStart { get; private set; }
+    public float FloatPreviousBeatCount { get; private set; }
 
     private AudioSource m_audioSource;
-    private bool m_isPlayPreviousFrame;
-    private bool m_musicFinished;
+    private bool m_isPlayingPreviousFrame;
 }

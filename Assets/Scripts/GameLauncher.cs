@@ -1,31 +1,20 @@
+using System;
 using UnityEngine;
 
 public class GameLauncher : MonoBehaviour
 {
-    private void Awake()
-    {
-        InputManager.CreateManager();
-        MusicManager.CreateManager();
-        EventManager.CreateManager();
-        ScoringManager.CreateManager();
-        PlayerActionManager.CreateManager();
-        UIManager.CreateManager();
-    }
-
     private void Start()
     {
-        InputManager.Instance.Initialize();
-        MusicManager.Instance.Initialize();
-        EventManager.Instance.Initialize();
+        m_gameManager = GameManager.CreateManager();
+        m_gameManager.Initialize();
         
-        EventManager.Instance.EventListenerAdd(UIManager.Instance);
+        
     }
 
     private void Update()
     {
-        InputManager.Instance.Tick();
-        MusicManager.Instance.Tick();
-        EventManager.Instance.Tick();
-        UIManager.Instance.Tick();
+        m_gameManager?.Tick();
     }
+
+    private GameManager m_gameManager;
 }

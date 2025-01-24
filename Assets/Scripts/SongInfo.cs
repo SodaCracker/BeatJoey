@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class SongInfo
+public class SongInfo : ScriptableObject
 {
-    public List<OnBeatActionInfo> m_onBeatActionSequence = new();
-    public List<StagingDirection> m_stagingDirectionSequence = new();
-    public float m_beatPerSecond = 120f / 60f;
-    public float m_beatPerBar = 4f;
+    public List<OnBeatActionInfo> m_onBeatActionSequence = new List<OnBeatActionInfo>();
+
+    public float m_beatPerSecond = 120.0f / 60.0f;
 }
